@@ -1,4 +1,4 @@
-# HalfModalTransition
+# SemiModalTransition
 
 iOSの半モーダルビューを再現するトランジションクラスと、Apple Pay支払い画面を再現したデモプログラム。
 
