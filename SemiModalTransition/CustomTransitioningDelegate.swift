@@ -1,5 +1,5 @@
 //
-//  HalfModalTransition
+//  SemiModalTransition
 //
 //  Created by usagimaru on 2017.11.05.
 //  Copyright © 2017年 usagimaru. All rights reserved.
@@ -10,15 +10,15 @@ import UIKit
 class TransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
 	
 	func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-		// HalfModalPresentationControllerを返す
-		let controller = HalfModalPresentationController(presentedViewController: presented, presenting: presenting)
+		// SemiModalPresentationControllerを返す
+		let controller = SemiModalPresentationController(presentedViewController: presented, presenting: presenting)
 		controller.dismissesOnTappingOutside = false
 		return controller
 	}
 	
 }
 
-class HalfModalTransitionSegue: UIStoryboardSegue {
+class SemiModalTransitionSegue: UIStoryboardSegue {
 	
 	private(set) var transitioningDelegatee = TransitioningDelegate()
 	

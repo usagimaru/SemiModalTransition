@@ -1,6 +1,6 @@
 //
 //  SeparatorLine.swift
-//  HalfModalTransition
+//  SemiModalTransition
 //
 //  Created by usagimaru on 2017.11.10.
 //  Copyright © 2017年 usagimaru. All rights reserved.

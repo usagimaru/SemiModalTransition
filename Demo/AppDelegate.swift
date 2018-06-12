@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  HalfModalTransition
+//  SemiModalTransition
 //
 //  Created by usagimaru on 2017.11.04.
 //  Copyright © 2017年 usagimaru. All rights reserved.

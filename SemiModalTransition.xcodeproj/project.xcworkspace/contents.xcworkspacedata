@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:HalfModalTransition.xcodeproj">
+      location = "self:/Users/smaru/Documents/dev/SemiModalTransition/SemiModalTransition.xcodeproj">
    </FileRef>
 </Workspace>

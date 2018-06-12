@@ -1,5 +1,5 @@
 //
-//  HalfModalPresentationController.swift
+//  SemiModalPresentationController.swift
 //
 //  Created by usagimaru on 2017.11.05.
 //  Copyright © 2017年 usagimaru. All rights reserved.
@@ -11,7 +11,7 @@ import UIKit
 presented:  呼び出し先ViewController
 presenting: 呼び出し元ViewController
 */
-class HalfModalPresentationController: UIPresentationController {
+class SemiModalPresentationController: UIPresentationController {
 	
 	private(set) var tapGestureRecognizer: UITapGestureRecognizer?
 	private var overlay = UIView()

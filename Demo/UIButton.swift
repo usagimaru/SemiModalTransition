@@ -1,6 +1,6 @@
 //
 //  CellButton.swift
-//  HalfModalTransition
+//  SemiModalTransition
 //
 //  Created by usagimaru on 2017.11.06.
 //  Copyright © 2017年 usagimaru. All rights reserved.

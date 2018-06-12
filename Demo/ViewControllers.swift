@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  HalfModalTransition
+//  SemiModalTransition
 //
 //  Created by usagimaru on 2017.11.04.
 //  Copyright © 2017年 usagimaru. All rights reserved.
@@ -14,12 +14,12 @@ let BGColor = UIColor(displayP3Red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
 
 class ModalNavigationController: UINavigationController {
 	
-	weak var halfModalPresentationController: HalfModalPresentationController?
+	weak var semiModalPresentationController: SemiModalPresentationController?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		halfModalPresentationController = presentationController as? HalfModalPresentationController
+		semiModalPresentationController = presentationController as? SemiModalPresentationController
 		
 		navigationBar.barTintColor = BGColor
 		view.backgroundColor = BGColor
@@ -107,7 +107,7 @@ class SecondViewController: UIViewController {
 			// `edgesForExtendedLayout = UIRectEdge()` として、ナビバーの下に潜らせないようにしておかないと、初回表示時にナビバーの高さ分縮んでしまう
 			var height = view.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
 			height += navi.navigationBar.frame.height
-			navi.halfModalPresentationController?.setModalHeight(height, animated: animated)
+			navi.semiModalPresentationController?.setModalHeight(height, animated: animated)
 		}
 	}
 	
@@ -147,7 +147,7 @@ class ThirdViewController: UIViewController, UITableViewDataSource, UITableViewD
 		super.viewDidAppear(animated)
 		
 		if let navi = navigationController as? ModalNavigationController {
-			navi.halfModalPresentationController?.setModalHeight(tableView.frame.height + navi.navigationBar.frame.height, animated: true)
+			navi.semiModalPresentationController?.setModalHeight(tableView.frame.height + navi.navigationBar.frame.height, animated: true)
 		}
 	}
 	
