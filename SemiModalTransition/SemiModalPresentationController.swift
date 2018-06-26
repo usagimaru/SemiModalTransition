@@ -2,15 +2,11 @@
 //  SemiModalPresentationController.swift
 //
 //  Created by usagimaru on 2017.11.05.
-//  Copyright © 2017年 usagimaru. All rights reserved.
+//  Copyright © 2017 Satori Maru. All rights reserved.
 //
 
 import UIKit
 
-/*
-presented:  呼び出し先ViewController
-presenting: 呼び出し元ViewController
-*/
 class SemiModalPresentationController: UIPresentationController {
 	
 	private(set) var tapGestureRecognizer: UITapGestureRecognizer?
@@ -19,26 +15,44 @@ class SemiModalPresentationController: UIPresentationController {
 	/// 呼び出し先ビューのframeを決定
 	override var frameOfPresentedViewInContainerView: CGRect {
 		var frame = containerView!.frame
-		frame.origin.y = frame.height - modalHeight
-		frame.size.height = modalHeight
+		frame.origin.y = frame.height - self.modalViewHeight
+		frame.size.height = self.modalViewHeight
 		return frame
 	}
 	
 	/// 外側をタップして閉じる
 	var dismissesOnTappingOutside: Bool = true {
 		didSet {
-			tapGestureRecognizer?.isEnabled = dismissesOnTappingOutside
+			self.tapGestureRecognizer?.isEnabled = self.dismissesOnTappingOutside
 		}
 	}
 	
-	private var modalHeight: CGFloat = 0
+	private var modalViewHeight: CGFloat = 0
 	
-	func setModalHeight(_ newHeight: CGFloat, animated: Bool) {
-		guard let presentedView = presentedView else {return}
+	/*
+	memo:
+	presented... 呼び出し先ViewController
+	presenting.. 呼び出し元ViewController
+	*/
+	
+	var backdropViewController: UIViewController {
+		return self.presentingViewController
+	}
+	
+	var frontViewController: UIViewController {
+		return self.presentedViewController
+	}
+	
+	
+	// MARK: -
+	
+	/// モーダルビューの高さを設定
+	func setModalViewHeight(_ newHeight: CGFloat, animated: Bool) {
+		guard let presentedView = self.presentedView else {return}
 		
-		modalHeight = newHeight
+		self.modalViewHeight = newHeight
 		
-		let frame = frameOfPresentedViewInContainerView
+		let frame = self.frameOfPresentedViewInContainerView
 		
 		if animated == false {
 			presentedView.frame = frame
@@ -51,20 +65,19 @@ class SemiModalPresentationController: UIPresentationController {
 					   animations: {
 						presentedView.frame = frame
 						presentedView.layoutIfNeeded()
-		},
-					   completion: nil)
+		}, completion: nil)
 	}
 	
 	private func setupOverlay(toContainerView: UIView) {
-		tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapOnOverlay(_:)))
-		tapGestureRecognizer!.isEnabled = dismissesOnTappingOutside
+		self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapOnOverlay(_:)))
+		self.tapGestureRecognizer!.isEnabled = self.dismissesOnTappingOutside
 		
-		overlay.frame = toContainerView.bounds
-		overlay.backgroundColor = UIColor.black
-		overlay.alpha = 0.0
-		overlay.gestureRecognizers = [tapGestureRecognizer!]
+		self.overlay.frame = toContainerView.bounds
+		self.overlay.backgroundColor = UIColor.black
+		self.overlay.alpha = 0.0
+		self.overlay.gestureRecognizers = [self.tapGestureRecognizer!]
 		
-		toContainerView.insertSubview(overlay, at: 0)
+		toContainerView.insertSubview(self.overlay, at: 0)
 	}
 	
 	/// 表示直前
@@ -73,7 +86,7 @@ class SemiModalPresentationController: UIPresentationController {
 		
 		setupOverlay(toContainerView: containerView)
 		
-		presentedViewController.transitionCoordinator?.animate(
+		self.frontViewController.transitionCoordinator?.animate(
 			alongsideTransition: { [weak self] (context) in
 				self?.overlay.alpha = 0.35
 		}, completion: nil)
@@ -81,7 +94,7 @@ class SemiModalPresentationController: UIPresentationController {
 	
 	/// 隠蔽直前
 	override func dismissalTransitionWillBegin() {
-		presentedViewController.transitionCoordinator?.animate(
+		self.frontViewController.transitionCoordinator?.animate(
 			alongsideTransition: { [weak self] (context) in
 				self?.overlay.alpha = 0.0
 		}, completion: nil)
@@ -89,21 +102,99 @@ class SemiModalPresentationController: UIPresentationController {
 	
 	override func dismissalTransitionDidEnd(_ completed: Bool) {
 		if completed {
-			overlay.removeFromSuperview()
+			self.overlay.removeFromSuperview()
 		}
 	}
 	
 	/// ビューのレイアウト直前
 	override func containerViewWillLayoutSubviews() {
 		if let containerView = containerView {
-			overlay.frame = containerView.bounds
+			self.overlay.frame = containerView.bounds
 		}
 		
-		presentedView?.frame = frameOfPresentedViewInContainerView
+		self.presentedView?.frame = self.frameOfPresentedViewInContainerView
 	}
 	
+	/// 背景透過部分のタップで閉じる
 	@objc private func tapOnOverlay(_ gesture: UITapGestureRecognizer) {
-		presentedViewController.dismiss(animated: true, completion: nil)
+		self.frontViewController.dismiss(animated: true, completion: nil)
+	}
+	
+	
+	// MARK: -
+	
+	/// 背景ビューのスケールとずれを適用するアフィン行列を返す
+	static func backdropTransform(withScale scale: CGFloat, translates: CGPoint) -> CGAffineTransform {
+		return CGAffineTransform(scaleX: scale, y: scale).translatedBy(x: translates.x, y: translates.y)
+	}
+	
+	/// 前景ビューを表示するトランジションを描画
+	func performPresentingTransition(withFrontMargin frontMargin: CGFloat,
+									 backdropMargins: CGPoint,
+									 backdropScale: CGFloat,
+									 backdropCornerRadius: CGFloat,
+									 animated: Bool,
+									 additionalAnimations parallelAnimations: (() -> Swift.Void)?) {
+		// モーダルビューの高さを設定
+		setModalViewHeight(self.frontViewController.view.frame.size.height - frontMargin, animated: false)
+		
+		// 背景ビューの縮小とずれ
+		let t = SemiModalPresentationController.backdropTransform(withScale: backdropScale, translates: backdropMargins)
+		
+		if animated {
+			UIView.perform(.delete,
+						   on: [],
+						   options: .beginFromCurrentState,
+						   animations: {
+							self.backdropViewController.view.transform = t
+							self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
+							self.frontViewController.setNeedsStatusBarAppearanceUpdate()
+							parallelAnimations?()
+			}, completion: nil)
+		}
+		else {
+			self.backdropViewController.view.transform = t
+			self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
+			self.frontViewController.setNeedsStatusBarAppearanceUpdate()
+		}
+	}
+	
+	/// 前景ビューを閉じるトランジションを描画
+	func performDismissingTransition(withCustomTransfrom customTransfrom: CGAffineTransform?,
+									 backdropCornerRadius: CGFloat,
+									 animated: Bool,
+									 additionalAnimations parallelAnimations: (() -> Swift.Void)?) {
+		var t = CGAffineTransform.identity
+		if let customTransfrom = customTransfrom {
+			t = customTransfrom
+		}
+		
+		if animated {
+			UIView.perform(.delete,
+						   on: [],
+						   options: .beginFromCurrentState,
+						   animations: {
+							self.backdropViewController.view.transform = t
+							self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
+							//self.frontViewController.setNeedsStatusBarAppearanceUpdate()
+							parallelAnimations?()
+			}, completion: nil)
+		}
+		else {
+			self.backdropViewController.view.transform = t
+			self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
+			//self.frontViewController.setNeedsStatusBarAppearanceUpdate()
+		}
+	}
+	
+	/// スクロール割合によって背景ビューのスケール・ずれを動的変化させる
+	func updateBackdropTransform(withScrollRate scrollRate: CGFloat,
+								 backdropScale: CGFloat,
+								 backdropScaleLimit: CGFloat,
+								 backdropMargins: CGPoint) {
+		let scale = max(min(backdropScale - scrollRate, backdropScaleLimit), backdropScale)
+		let t = SemiModalPresentationController.backdropTransform(withScale: scale, translates: backdropMargins)
+		self.backdropViewController.view.transform = t
 	}
 
 }

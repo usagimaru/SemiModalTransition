@@ -107,7 +107,7 @@ class SecondViewController: UIViewController {
 			// `edgesForExtendedLayout = UIRectEdge()` として、ナビバーの下に潜らせないようにしておかないと、初回表示時にナビバーの高さ分縮んでしまう
 			var height = view.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
 			height += navi.navigationBar.frame.height
-			navi.semiModalPresentationController?.setModalHeight(height, animated: animated)
+			navi.semiModalPresentationController?.setModalViewHeight(height, animated: animated)
 		}
 	}
 	
@@ -147,7 +147,7 @@ class ThirdViewController: UIViewController, UITableViewDataSource, UITableViewD
 		super.viewDidAppear(animated)
 		
 		if let navi = navigationController as? ModalNavigationController {
-			navi.semiModalPresentationController?.setModalHeight(tableView.frame.height + navi.navigationBar.frame.height, animated: true)
+			navi.semiModalPresentationController?.setModalViewHeight(tableView.frame.height + navi.navigationBar.frame.height, animated: true)
 		}
 	}
 	
