@@ -58,13 +58,10 @@ class SemiModalPresentationController: UIPresentationController {
 			presentedView.frame = frame
 			return
 		}
-		
-		UIView.perform(.delete,
-					   on: [],
-					   options: [.beginFromCurrentState, .allowUserInteraction],
-					   animations: {
-						presentedView.frame = frame
-						presentedView.layoutIfNeeded()
+
+		UIView.animateWithSystemMotion({
+			presentedView.frame = frame
+			presentedView.layoutIfNeeded()
 		}, completion: nil)
 	}
 	
@@ -142,14 +139,11 @@ class SemiModalPresentationController: UIPresentationController {
 		let t = SemiModalPresentationController.backdropTransform(withScale: backdropScale, translates: backdropMargins)
 		
 		if animated {
-			UIView.perform(.delete,
-						   on: [],
-						   options: .beginFromCurrentState,
-						   animations: {
-							self.backdropViewController.view.transform = t
-							self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
-							self.frontViewController.setNeedsStatusBarAppearanceUpdate()
-							parallelAnimations?()
+			UIView.animateWithSystemMotion({
+				self.backdropViewController.view.transform = t
+				self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
+				self.frontViewController.setNeedsStatusBarAppearanceUpdate()
+				parallelAnimations?()
 			}, completion: nil)
 		}
 		else {
@@ -170,14 +164,11 @@ class SemiModalPresentationController: UIPresentationController {
 		}
 		
 		if animated {
-			UIView.perform(.delete,
-						   on: [],
-						   options: .beginFromCurrentState,
-						   animations: {
-							self.backdropViewController.view.transform = t
-							self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
-							//self.frontViewController.setNeedsStatusBarAppearanceUpdate()
-							parallelAnimations?()
+			UIView.animateWithSystemMotion({
+				self.backdropViewController.view.transform = t
+				self.backdropViewController.view.layer.cornerRadius = backdropCornerRadius
+				//self.frontViewController.setNeedsStatusBarAppearanceUpdate()
+				parallelAnimations?()
 			}, completion: nil)
 		}
 		else {
