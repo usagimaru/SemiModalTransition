@@ -105,7 +105,7 @@ class SecondViewController: UIViewController {
 	private func fitting(animated: Bool) {
 		if let navi = navigationController as? ModalNavigationController {
 			// `edgesForExtendedLayout = UIRectEdge()` として、ナビバーの下に潜らせないようにしておかないと、初回表示時にナビバーの高さ分縮んでしまう
-			var height = view.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+			var height = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
 			height += navi.navigationBar.frame.height
 			navi.semiModalPresentationController?.setModalViewHeight(height, animated: animated)
 		}

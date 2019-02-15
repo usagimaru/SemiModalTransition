@@ -30,12 +30,12 @@ extension UIButtonHighlighting where Self: UIButton {
 			
 			addConstraints(NSLayoutConstraint.constraints(
 				withVisualFormat: "V:|[highlightLayer]|",
-				options: NSLayoutFormatOptions(),
+				options: NSLayoutConstraint.FormatOptions(),
 				metrics: nil,
 				views: ["highlightLayer" : highlightLayer]))
 			addConstraints(NSLayoutConstraint.constraints(
 				withVisualFormat: "H:|[highlightLayer]|",
-				options: NSLayoutFormatOptions(),
+				options: NSLayoutConstraint.FormatOptions(),
 				metrics: nil,
 				views: ["highlightLayer" : highlightLayer]))
 		}

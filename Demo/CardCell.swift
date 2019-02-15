@@ -52,7 +52,7 @@ class CardCell: UITableViewCell {
 	func fittingSize() -> CGSize {
 		updateConstraints()
 		layoutIfNeeded()
-		return systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+		return systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 	}
 
 }
